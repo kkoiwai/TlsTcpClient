@@ -1,8 +1,9 @@
 /*
-TlsTcpClient library for Particle Photon
+WioLteTlsClient library for Wio-LTE
 This software is released under the MIT License.
 
 Copyright (c) 2016 Hirotaka Niisato
+Modified by Kosuke Koiwai
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -26,7 +27,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef MBED_TLS_TCP_CLIENT_h
 #define MBED_TLS_TCP_CLIENT_h
 
-#include "application.h"
+//#include "application.h"
 #include "check_config.h"
 
 #include "net.h"
@@ -37,20 +38,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "error.h"
 #include "timing.h"
 #include "ssl_internal.h"
-#include "timer_hal.h"
+//#include "timer_hal.h"
+//#include "stm32f4xx_hal_rng.h"
+
+#include "../../Wio_LTE_for_Arduino/WioLTEClient.h"
 
 // for debugging.
 // #define DEBUG_TLS       1
 #if defined(MBEDTLS_DEBUG_C)
 #define DEBUG_TLS_CORE_LEVEL 1
 #define debug_tls( fmt, ... ) \
-    Serial.printf(fmt, ##__VA_ARGS__)
+    SerialUSB.printf(fmt, ##__VA_ARGS__)
 #else /* !DEBUG_TLS */
   #define debug_tls( fmt, ... ) ((void)0)
 #endif /* DEBUG_TLS */
 
 
-class TlsTcpClient {
+
+class WioLteTlsClient {
 
 private:
     mbedtls_entropy_context entropy;
@@ -61,12 +66,12 @@ private:
   	mbedtls_pk_context pkey;
     mbedtls_timing_delay_context timer;
 
-    TCPClient client;
+    WioLTEClient* client;
     bool connected;
 
     static int send_Tls(void *ctx, const unsigned char *buf, size_t len);
     static int recv_Tls(void *ctx, unsigned char *buf, size_t len);
-    static int rng_Tls(void* handle, uint8_t* data, const size_t len_);
+   static int rng_Tls(void* handle, uint8_t* data, const size_t len_);
     static void debug_Tls( void *ctx, int level,
                           const char *file, int line,
                           const char *str );
@@ -74,8 +79,8 @@ private:
     int handShake();
 
 public:
-    TlsTcpClient();
-    ~TlsTcpClient(){ close(); };
+    WioLteTlsClient(WioLTEClient* wio);
+    ~WioLteTlsClient(){ close(); };
     void close();
 
     int init(const char *rootCaPem, const size_t rootCaPemSize);

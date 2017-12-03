@@ -522,7 +522,7 @@ hard_test_done:
 
 #endif /* MBEDTLS_SELF_TEST */
 
-#include "timer_hal.h"
+#include <Arduino.h>
 /*
 extern "C" unsigned long mbedtls_timing_hardclock()
 {
@@ -533,7 +533,7 @@ extern "C" unsigned long mbedtls_timing_hardclock()
 // todo - would prefer this was provided as a callback.
 extern "C" int _gettimeofday( struct timeval *tv, void *tzvp )
 {
-    uint32_t t = HAL_Timer_Milliseconds();  // get uptime in nanoseconds
+    uint32_t t = millis();  // get uptime in nanoseconds
     tv->tv_sec = t / 1000;  // convert to seconds
     tv->tv_usec = ( t % 1000 )*1000;  // get remaining microseconds
     return 0;  // return non-zero for error
